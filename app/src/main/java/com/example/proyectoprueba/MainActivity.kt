@@ -4,47 +4,34 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import com.example.proyectoprueba.data.repository.InMemoryTaskRepository
+import com.example.proyectoprueba.domain.usecase.AddTaskUseCase
+import com.example.proyectoprueba.domain.usecase.GetTasksUseCase
+import com.example.proyectoprueba.domain.usecase.ToggleTaskCompletionUseCase
+import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskApp
+import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskViewModel
+import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskViewModelFactory
 import com.example.proyectoprueba.ui.theme.ProyectoPruebaTheme
-import androidx.compose.ui.graphics.Color
-import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<AcademicTaskViewModel> {
+        val repository = InMemoryTaskRepository()
+        AcademicTaskViewModelFactory(
+            getTasksUseCase = GetTasksUseCase(repository),
+            addTaskUseCase = AddTaskUseCase(repository),
+            toggleTaskCompletionUseCase = ToggleTaskCompletionUseCase(repository)
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             ProyectoPruebaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AcademicTaskApp(viewModel = viewModel)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Bienvenido al curso 2026, $name",
-        color = Color.Blue,
-        style = MaterialTheme.typography.headlineMedium
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ProyectoPruebaTheme {
-        Greeting("Android")
     }
 }
