@@ -35,16 +35,26 @@ fun GradeListScreen(viewModel: GradeViewModel) {
                 is GradeUiState.Success -> {
                     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                         item {
+                            val cardColor = when {
+                                state.average >= 7.0 -> MaterialTheme.colorScheme.primaryContainer
+                                state.average >= 5.0 -> MaterialTheme.colorScheme.tertiaryContainer
+                                else -> MaterialTheme.colorScheme.errorContainer
+                            }
+                            val textColor = when {
+                                state.average >= 7.0 -> MaterialTheme.colorScheme.primary
+                                state.average >= 5.0 -> MaterialTheme.colorScheme.tertiary
+                                else -> MaterialTheme.colorScheme.error
+                            }
                             Card(
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                                colors = CardDefaults.cardColors(containerColor = cardColor)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text("Promedio General Acumulado", style = MaterialTheme.typography.titleMedium)
                                     Text(
                                         "%.2f / 10.00".format(state.average),
                                         style = MaterialTheme.typography.headlineLarge,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = textColor
                                     )
                                 }
                             }
