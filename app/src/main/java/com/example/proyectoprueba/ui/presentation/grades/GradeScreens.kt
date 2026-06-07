@@ -8,7 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 @Composable
 fun GradeApp(viewModel: GradeViewModel) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -103,23 +104,27 @@ fun GradeFormScreen(viewModel: GradeViewModel) {
             viewModel.inputScore.isNotBlank()
     Scaffold { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center
         ) {
             Text("Registrar Calificación", style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 24.dp))
+                modifier = Modifier.padding(bottom = 16.dp))
             OutlinedTextField(value = viewModel.inputActivity,
                 onValueChange = { viewModel.onActivityChange(it) },
                 label = { Text("Nombre de la actividad") }, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             OutlinedTextField(value = viewModel.inputSubject,
                 onValueChange = { viewModel.onSubjectChange(it) },
                 label = { Text("Asignatura") }, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             OutlinedTextField(value = viewModel.inputScore,
                 onValueChange = { viewModel.onScoreChange(it) },
                 label = { Text("Nota (0.0 – 10.0)") }, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(onClick = { viewModel.onNavigateToList() }) { Text("Cancelar") }
                 Button(onClick = { viewModel.onSaveGrade() }, enabled = allFilled) { Text("Registrar") }
