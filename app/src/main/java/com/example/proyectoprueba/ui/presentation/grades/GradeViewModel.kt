@@ -82,4 +82,12 @@ class GradeViewModel(
             }
         }
     }
+    fun onDismissError() {
+        viewModelScope.launch {
+            getGradesUseCase().collect { gradeList ->
+                val avg = gradeList.map { it.score }.average().takeIf { !it.isNaN() } ?: 0.0
+                _uiState.value = GradeUiState.Success(gradeList, avg)
+            }
+        }
+    }
 }

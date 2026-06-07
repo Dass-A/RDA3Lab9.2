@@ -4,33 +4,36 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import com.example.proyectoprueba.data.repository.InMemoryTaskRepository
-import com.example.proyectoprueba.domain.usecase.AddTaskUseCase
-import com.example.proyectoprueba.domain.usecase.GetTasksUseCase
-import com.example.proyectoprueba.domain.usecase.ToggleTaskCompletionUseCase
-import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskApp
-import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskViewModel
-import com.example.proyectoprueba.ui.presentation.tasks.AcademicTaskViewModelFactory
+import androidx.lifecycle.ViewModelProvider
+import com.example.proyectoprueba.data.repository.InMemoryGradeRepository
+import com.example.proyectoprueba.domain.usecase.AddGradeUseCase
+import com.example.proyectoprueba.domain.usecase.GetGradesUseCase
+import com.example.proyectoprueba.ui.presentation.grades.GradeApp
+import com.example.proyectoprueba.ui.presentation.grades.GradeViewModel
 import com.example.proyectoprueba.ui.theme.ProyectoPruebaTheme
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<AcademicTaskViewModel> {
-        val repository = InMemoryTaskRepository()
-        AcademicTaskViewModelFactory(
-            getTasksUseCase = GetTasksUseCase(repository),
-            addTaskUseCase = AddTaskUseCase(repository),
-            toggleTaskCompletionUseCase = ToggleTaskCompletionUseCase(repository)
-        )
-    }
+    private lateinit var viewModel: GradeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val repository = InMemoryGradeRepository()
+        val factory = object : ViewModelProvider.Factory {
+            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return GradeViewModel(
+                    GetGradesUseCase(repository),
+                    AddGradeUseCase(repository)
+                ) as T
+            }
+        }
+        viewModel = ViewModelProvider(this, factory)[GradeViewModel::class.java]
+
         setContent {
             ProyectoPruebaTheme {
-                AcademicTaskApp(viewModel = viewModel)
+                GradeApp(viewModel = viewModel)
             }
         }
     }
